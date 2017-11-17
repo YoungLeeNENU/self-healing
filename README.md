@@ -1,24 +1,23 @@
-# self-healing
+# 话题主题
 
-An experiment with self healing functions and clojure.spec
+self healing code
 
-Based on the papers of
-* [Towards Design for Self-healing](http://software.imdea.org/~alessandra.gorla/papers/Gorla-DesignSH-SoQua07.pdf)
-* [CodePhage](http://people.csail.mit.edu/stelios/papers/codephage_pldi15.pdf) 
+## 话题介绍
 
-## Usage
+介绍一种程序能够从错误中自动修复愈合的技术，实现采用了 Clojure 和 Clojure.spec
 
-Check out the `core.clj` comment section for example.
+## Introduction
 
-```clojure
-(healing/with-healing (report [1 2 3 4 5 "a" "b"]))
-;=>"The average is 3"
+* Clojure 介绍
 
-(healing/with-healing (report []))
-;=>"The average is 0"
+* Clojure.spec 介绍
+
+* Demo 讲解
+
+* 一些个人思考
+
+## 个人介绍
+李旸，美团点评点餐终端团队架构组成员
+```shell
+npm install -g younglee
 ```
-
-Copyright © 2016 Carin Meier
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.

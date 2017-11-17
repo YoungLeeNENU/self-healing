@@ -17,6 +17,8 @@
         :args ::numbers-params
         :ret ::result)
 
+;; ====================================================================================
+
 (defn bad-calc-average [earnings]
   (if (empty? earnings)
     0

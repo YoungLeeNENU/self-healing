@@ -3,12 +3,14 @@
             [clojure.string :as string]))
 
 (defn get-spec-data [spec-symb]
+  "Retrieve the failing function's spec from the spec registry"
   (let [[_ _ args _ ret _ fn] (s/form spec-symb)]
-       {:args args
-        :ret ret
-        :fn fn}))
+    {:args args
+     :ret ret
+     :fn fn}))
 
 (defn failing-function-name [e]
+  "Fetch the failing functin name from the stack trace"
   (as-> (.getStackTrace e) ?
     (map #(.getClassName %) ?)
     (filter #(string/starts-with? % "self_healing.core") ?)
@@ -30,12 +32,12 @@
   (let [rcandidate (resolve candidate)
         orig-fn (resolve (symbol fname))
         result-new (try-fn rcandidate failing-input)
-        [[seed]] (s/exercise (:args orig-fspec) 1)
+        [[seed]] (s/exercise (:args orig-fspec) 1) ;exercise
         result-old-seed (try-fn rcandidate seed)
         result-new-seed (try-fn orig-fn seed)]
     (println "****Comparing seed " seed "with new function")
     (println "****Result: old" result-old-seed "new" result-new-seed)
-    (and (not= :failed result-new)
+    (and (not= :failed result-new)      ;new result from candidates
          (s/valid? (:ret c-fspec) result-new)
          (s/valid? (:ret orig-fspec) result-new)
          (= result-old-seed result-new-seed))))
@@ -53,7 +55,8 @@
                         (filter #(string/starts-with? (namespace %) "self-healing.candidates"))
                         (filter symbol?))]
     (println "Checking candidates " candidates)
-    (some #(if (spec-matching? fname fspec-data failing-input %) %) (shuffle candidates))))
+    (some #(if (spec-matching? fname fspec-data failing-input %) %)
+          (shuffle candidates))))
 
 
 (defn self-heal [e input orig-form]
@@ -67,16 +70,15 @@
         (println "Found a matching candidate replacement for failing function" fname " for input" input)
         (println "Replacing with candidate match" match)
         (println "----------")
-        (eval `(def ~(symbol fname) ~match))
+        (eval `(def ~(symbol fname) ~match)) ;refine
         (println "Calling function again")
-        (let [new-result (eval orig-form)]
+        (let [new-result (eval orig-form)] ;recall
           (println "Healed function result is:" new-result)
           new-result))
       (println "No suitable replacment for failing function "  fname " with input " input ":("))))
 
+;; Try and catch any exceptions.
 (defmacro with-healing [body]
   (let [params (second body)]
     `(try ~body
           (catch Exception e# (self-heal e# ~params '~body)))))
-
-

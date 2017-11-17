@@ -8,6 +8,7 @@
 
 
 (s/def ::earnings (s/coll-of any?))
+;; earnings will be a vector, with another vector of anything.
 (s/def ::earnings-params (s/cat :elements ::earnings))
 
 (s/def ::cleaned-earnings (s/with-gen
@@ -19,7 +20,7 @@
 (s/def ::average-params (s/cat :elements ::average))
 (s/def ::report-format string?)
 
-(s/exercise ::cleaned-earnings 1)
+(s/exercise ::cleaned-earnings-params 1)
 ;=> ([[1 2 3 4 5] [1 2 3 4 5]])
 
 (defn clean-bad-data [earnings]
@@ -63,34 +64,26 @@
 ;=> "The average is 3"
 
 
-
 (comment
 
+  (healing/with-healing (calc-average [1 2 3 4 5]))
+  (healing/with-healing (calc-average []))
 
-(healing/with-healing (calc-average [1 2 3 4 5]))
-(healing/with-healing (calc-average []))
+  (healing/with-healing (report [1 2 3 4 5 "a" "b"]))
+                                        ;=>"The average is 3"
 
-(healing/with-healing (report [1 2 3 4 5 "a" "b"]))
-;=>"The average is 3"
+  (healing/with-healing (report []))
+                                        ;=>"The average is 0"
 
-(healing/with-healing (report []))
-;=>"The average is 0"
+  ;; We also could have used the post fn comparisions for extra validation
 
-;; We also could have used the post fn comparisions for extra validation
- 
   ;;; Worth noting that the divide by zero example would have been
   ;;; caught by using stest/check
-(s/def ::cleaned-earnings (s/coll-of number?))
-(defn calc-average [earnings]
-  (/ (apply + earnings) (count earnings)))
+  (s/def ::cleaned-earnings (s/coll-of number?))
+  (defn calc-average [earnings]
+    (/ (apply + earnings) (count earnings)))
 
-(stest/check `calc-average)
+  (stest/check `calc-average)
 
-(healing/get-spec-data`calc-average)
-)
-
-
-
-
-
-
+  (healing/get-spec-data`calc-average)
+  )
