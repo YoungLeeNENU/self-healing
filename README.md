@@ -6,7 +6,7 @@ self healing code
 
 介绍一种程序能够从错误中自动修复愈合的技术，实现采用了 Clojure 和 Clojure.spec
 
-## Introduction
+## 演讲大纲
 
 * Clojure 介绍
 
